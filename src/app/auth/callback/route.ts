@@ -27,6 +27,23 @@ export async function GET(request: Request) {
     );
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        // upsert = insert if new, do nothing if exists
+        await supabase.from("users").upsert(
+          {
+            id: user.id,
+            email: user.email,
+            full_name: user.user_metadata.full_name,
+            avatar_url: user.user_metadata.avatar_url,
+          },
+          { onConflict: "id" },
+        );
+      }
+
       return NextResponse.redirect(`${origin}/checkin`);
     }
   }

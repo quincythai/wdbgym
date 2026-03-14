@@ -1,10 +1,23 @@
+"use client";
+
 import Image from "next/image";
 import { Great_Vibes } from "next/font/google";
 import CarouselBackground from "@/components/CarouselBackground";
+import { createClient } from "@/lib/supabase/client";
 
 const cursive = Great_Vibes({ subsets: ["latin"], weight: "400" });
 
 export default function Login() {
+  const handleSignIn = async () => {
+    const supabase = createClient();
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+  };
+
   return (
     <main className="relative min-h-screen bg-black flex flex-col items-center overflow-hidden justify-center">
       <CarouselBackground />
@@ -36,7 +49,10 @@ export default function Login() {
         </p>
         {/* login button */}
 
-        <button className="mt-6 w-full flex items-center justify-center gap-3 bg-white text-black font-bold py-3 px-6 rounded-full text-md hover:bg-white/90 active:scale-95 transition-all">
+        <button
+          className="mt-6 w-full flex items-center justify-center gap-3 bg-white text-black font-bold py-3 px-6 rounded-full text-md hover:bg-white/90 active:scale-95 transition-all"
+          onClick={handleSignIn}
+        >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
@@ -55,11 +71,9 @@ export default function Login() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
           </svg>
-          Google Login
+          <p className="text-black text-sm font-light uppercase">Login</p>
         </button>
       </div>
-
-      {/* gym word in cursive */}
     </main>
   );
 }
