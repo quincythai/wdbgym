@@ -122,9 +122,9 @@ export default function LeaderboardPage() {
                       <img
                         src={user.avatar_url}
                         alt={user.full_name}
-                        className="w-10 h-10 rounded-full object-cover border border-white/20"
+                        className="w-14 h-14 rounded-full object-cover border border-white/20"
                       />
-                      <p className="text-white/80 text-xs text-center mt-1 leading-tight">
+                      <p className="text-white/80 text-md text-center mt-1 leading-tight">
                         {user.full_name.split(" ")[0]}
                       </p>
                     </div>
@@ -134,8 +134,8 @@ export default function LeaderboardPage() {
                 <div
                   className={`w-full ${podiumHeights[tierIndex]} bg-white/10 rounded-t-md flex flex-col items-center justify-start pt-2 gap-1`}
                 >
-                  <span className="text-lg">{medals[tierIndex]}</span>
-                  <span className="text-white/60 text-xs">
+                  <span className="text-2xl">{medals[tierIndex]}</span>
+                  <span className="text-white/60 text-lg">
                     {tier[0].count}x
                   </span>
                 </div>

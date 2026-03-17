@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-const GYM_LAT = 37.8678;
-const GYM_LNG = -122.262;
-const GYM_RADIUS_METERS = 150;
+const GYM_LAT = parseFloat(process.env.NEXT_PUBLIC_GYM_LAT!);
+const GYM_LNG = parseFloat(process.env.NEXT_PUBLIC_GYM_LNG!);
+const GYM_RADIUS_MILES = parseFloat(process.env.NEXT_PUBLIC_GYM_RADIUS_MILES!);
 
 function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
-  const R = 6371000; // earth radius in meters
+  const R = 3958.8; // earth radius in miles
   const φ1 = (lat1 * Math.PI) / 180;
   const φ2 = (lat2 * Math.PI) / 180;
   const Δφ = ((lat2 - lat1) * Math.PI) / 180;
@@ -76,7 +76,7 @@ export default function CheckinPage() {
         const { latitude, longitude } = position.coords;
         const distance = getDistance(latitude, longitude, GYM_LAT, GYM_LNG);
 
-        if (distance > GYM_RADIUS_METERS) {
+        if (distance > GYM_RADIUS_MILES) {
           alert(
             `You must be at the RSF to check in. You are ${Math.round(distance)}m away.`,
           );
