@@ -153,7 +153,7 @@ export default function CheckinPage() {
       <div className="absolute top-4 right-4 z-10">
         <button
           onClick={handleSignOut}
-          className="text-white/30 text-xs tracking-widest uppercase hover:text-white/60 transition-colors"
+          className="text-black text-xs tracking-widest uppercase hover:text-black/60 transition-colors bg-white rounded-full px-4 py-2"
         >
           Sign Out
         </button>
