@@ -128,7 +128,7 @@ export default function CheckinPage() {
 
   return (
     <div
-      className="flex flex-col items-center justify-center bg-black text-white px-6"
+      className="relative flex flex-col items-center justify-center bg-black text-white px-6"
       style={{ minHeight: "calc(100vh - 4rem)" }}
     >
       {checkedIn ? (
@@ -150,12 +150,14 @@ export default function CheckinPage() {
         </>
       )}
 
-      <button
-        onClick={handleSignOut}
-        className="text-white/30 text-xs tracking-widest uppercase hover:text-white/60 transition-colors"
-      >
-        Sign Out
-      </button>
+      <div className="absolute top-4 right-4 z-10">
+        <button
+          onClick={handleSignOut}
+          className="text-white/30 text-xs tracking-widest uppercase hover:text-white/60 transition-colors"
+        >
+          Sign Out
+        </button>
+      </div>
     </div>
   );
 }
