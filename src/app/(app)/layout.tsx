@@ -36,7 +36,10 @@ export default async function AppLayout({
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white">
+    <div
+      className="flex flex-col bg-black text-white overflow-hidden"
+      style={{ height: "100dvh" }}
+    >
       <main className="flex-1 overflow-y-auto">{children}</main>
       <TabBar />
     </div>
