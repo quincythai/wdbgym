@@ -57,9 +57,6 @@ export default function LeaderboardPage() {
           .gte("checked_in_at", weekStart.toISOString()),
       ]);
 
-      console.log("users:", users, usersError);
-      console.log("checkins:", checkins, checkinsError);
-
       if (!users) return;
 
       const counts: UserCount[] = users
@@ -103,7 +100,7 @@ export default function LeaderboardPage() {
   return (
     <div className="flex flex-col bg-black text-white px-4 pt-8 pb-4">
       {/* week label */}
-      <p className="text-center text-white text-lg tracking-widest uppercase mb-8">
+      <p className="font-bold text-center text-white text-lg tracking-widest uppercase mb-8">
         {weekLabel}
       </p>
 
@@ -155,7 +152,7 @@ export default function LeaderboardPage() {
             key={user.id}
             className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5"
           >
-            <span className="text-white/30 text-xs w-4">
+            <span className="text-white/30 text-md w-4">
               {tiers.length + 1 + i}
             </span>
             <img
@@ -163,10 +160,10 @@ export default function LeaderboardPage() {
               alt={user.full_name}
               className="w-8 h-8 rounded-full object-cover"
             />
-            <span className="flex-1 text-sm text-white/80">
+            <span className="flex-1 text-md text-white/80">
               {user.full_name}
             </span>
-            <span className="text-white/40 text-xs">{user.count}x</span>
+            <span className="text-white/40 text-md">{user.count}x</span>
           </div>
         ))}
       </div>
