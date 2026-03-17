@@ -113,6 +113,11 @@ export default function CheckinPage() {
         alert("Please enable location services to check in.");
         setSubmitting(false);
       },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      },
     );
   };
 
