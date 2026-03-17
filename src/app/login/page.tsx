@@ -19,7 +19,10 @@ export default function Login() {
   };
 
   return (
-    <main className="relative min-h-screen bg-black flex flex-col items-center overflow-hidden justify-center">
+    <main
+      className="relative bg-black flex flex-col items-center overflow-hidden justify-center"
+      style={{ minHeight: "100dvh" }}
+    >
       <CarouselBackground />
 
       {/* Dark vignette overlay */}
