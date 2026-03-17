@@ -36,9 +36,9 @@ body {
 }
 
 .animate-scroll-left {
-  animation: scroll-left 3s linear infinite;
+  animation: scroll-left 12s linear infinite;
 }
 
 .animate-scroll-right {
-  animation: scroll-right 3s linear infinite;
+  animation: scroll-right 12s linear infinite;
 }
