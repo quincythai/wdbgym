@@ -27,6 +27,12 @@ export default function CheckinPage() {
   const [checkinTime, setCheckinTime] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    window.location.href = "/login";
+  };
+
   useEffect(() => {
     const init = async () => {
       const supabase = createClient();
@@ -143,6 +149,13 @@ export default function CheckinPage() {
           </button>
         </>
       )}
+
+      <button
+        onClick={handleSignOut}
+        className="text-white/30 text-xs tracking-widest uppercase hover:text-white/60 transition-colors"
+      >
+        Sign Out
+      </button>
     </div>
   );
 }
