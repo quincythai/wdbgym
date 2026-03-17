@@ -9,7 +9,10 @@ type UserCount = {
   full_name: string;
   avatar_url: string;
   count: number;
+  checkedDays: boolean[];
 };
+
+const DAYS = ["M", "T", "W", "Th", "F", "Sa", "Su"];
 
 function getWeekBounds() {
   const now = new Date();
@@ -29,14 +32,27 @@ function getWeekBounds() {
   return { weekStart, label };
 }
 
-const medals = ["🥇", "🥈", "🥉"];
-const podiumHeights = ["h-28", "h-20", "h-16"];
-const podiumOrder = [1, 0, 2]; // silver, gold, bronze display order
+function formatName(fullName: string) {
+  const parts = fullName.split(" ");
+  if (parts.length < 2) return fullName;
+  return `${parts[0]} ${parts[parts.length - 1][0]}.`;
+}
+
+function getCheckedDays(userCheckins: { checked_in_at: string }[]) {
+  if (!userCheckins || userCheckins.length === 0) {
+    return DAYS.map(() => false);
+  }
+  const dayIndices = userCheckins.map((c) => {
+    const d = new Date(c.checked_in_at).getDay();
+    return d === 0 ? 6 : d - 1;
+  });
+  return DAYS.map((_, i) => dayIndices.includes(i));
+}
 
 export default function LeaderboardPage() {
   const [loading, setLoading] = useState(true);
+  const [allRanked, setAllRanked] = useState<UserCount[]>([]);
   const [tiers, setTiers] = useState<UserCount[][]>([]);
-  const [rest, setRest] = useState<UserCount[]>([]);
   const [weekLabel, setWeekLabel] = useState("");
 
   useEffect(() => {
@@ -45,25 +61,29 @@ export default function LeaderboardPage() {
       const { weekStart, label } = getWeekBounds();
       setWeekLabel(label);
 
-      const [
-        { data: users, error: usersError },
-        { data: checkins, error: checkinsError },
-      ] = await Promise.all([
-        supabase.from("users").select("id, full_name, avatar_url"),
-        //   .eq("approved", true),
+      const [{ data: users }, { data: checkins }] = await Promise.all([
+        supabase
+          .from("users")
+          .select("id, full_name, avatar_url")
+          .eq("approved", true),
         supabase
           .from("checkins")
-          .select("user_id")
+          .select("user_id, checked_in_at")
           .gte("checked_in_at", weekStart.toISOString()),
       ]);
 
       if (!users) return;
 
       const counts: UserCount[] = users
-        .map((user) => ({
-          ...user,
-          count: checkins?.filter((c) => c.user_id === user.id).length ?? 0,
-        }))
+        .map((user) => {
+          const userCheckins =
+            checkins?.filter((c) => c.user_id === user.id) ?? [];
+          return {
+            ...user,
+            count: userCheckins.length,
+            checkedDays: getCheckedDays(userCheckins),
+          };
+        })
         .sort((a, b) => b.count - a.count);
 
       const uniqueCounts = [...new Set(counts.map((u) => u.count))]
@@ -74,17 +94,17 @@ export default function LeaderboardPage() {
       const computedTiers = uniqueCounts.map((count) =>
         counts.filter((u) => u.count === count),
       );
-      const computedRest = counts.filter(
-        (u) => !uniqueCounts.includes(u.count),
-      );
 
+      setAllRanked(counts);
       setTiers(computedTiers);
-      setRest(computedRest);
       setLoading(false);
     };
 
     init();
   }, []);
+
+  const getTier = (user: UserCount) =>
+    tiers.findIndex((t) => t.some((u) => u.id === user.id));
 
   if (loading) {
     return (
@@ -99,73 +119,80 @@ export default function LeaderboardPage() {
 
   return (
     <div className="flex flex-col bg-black text-white px-4 pt-8 pb-4">
-      {/* week label */}
       <p className="font-bold text-center text-white text-lg tracking-widest uppercase mb-8">
         {weekLabel}
       </p>
 
-      {/* podium */}
-      {tiers.length > 0 && (
-        <div className="flex items-end justify-center gap-3 mb-10">
-          {podiumOrder.map((tierIndex) => {
-            const tier = tiers[tierIndex];
-            if (!tier) return <div key={tierIndex} className="w-24" />;
-            return (
-              <div
-                key={tierIndex}
-                className="flex flex-col items-center gap-1 w-24"
-              >
-                {/* stacked avatars if tied */}
-                <div className="flex flex-col items-center gap-1 mb-1">
-                  {tier.map((user) => (
-                    <div key={user.id} className="flex flex-col items-center">
-                      <img
-                        src={user.avatar_url}
-                        alt={user.full_name}
-                        className="w-14 h-14 rounded-full object-cover border border-white/20"
-                      />
-                      <p className="text-white/80 text-md text-center mt-1 leading-tight">
-                        {user.full_name.split(" ")[0]}
-                      </p>
+      <div className="flex flex-col gap-2">
+        {allRanked.map((user) => {
+          const tier = getTier(user);
+          const isGold = tier === 0 && user.count > 0;
+          const isSilver = tier === 1;
+          const isBronze = tier === 2;
+
+          return (
+            <div
+              key={user.id}
+              className={`flex flex-col gap-2 px-3 py-3 rounded-lg ${
+                isGold
+                  ? "bg-yellow-500/20 border border-yellow-500/30"
+                  : isSilver
+                    ? "bg-white/10 border border-white/10"
+                    : isBronze
+                      ? "bg-white/5 border border-white/5"
+                      : "bg-white/5"
+              }`}
+            >
+              {/* top row: medal, avatar, name */}
+              <div className="flex items-center gap-3">
+                <span className="text-lg w-6 text-center">
+                  {isGold ? "🥇" : isSilver ? "🥈" : isBronze ? "🥉" : ""}
+                </span>
+                <div className="w-9 h-9 rounded-full bg-white/20 overflow-hidden flex items-center justify-center shrink-0">
+                  {user.avatar_url ? (
+                    <img
+                      src={user.avatar_url}
+                      alt={user.full_name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-sm text-white/50">
+                      {user.full_name[0]}
+                    </span>
+                  )}
+                </div>
+                <span className="flex-1 text-sm text-white/80">
+                  {formatName(user.full_name)}
+                </span>
+                <span
+                  className={`text-xs font-medium ${isGold ? "text-yellow-400" : "text-white/40"}`}
+                >
+                  {user.count}x
+                </span>
+              </div>
+
+              {/* day circles */}
+              {user.count > 0 && (
+                <div className="flex gap-1 pl-9 ml-6">
+                  {DAYS.map((day, i) => (
+                    <div
+                      key={day}
+                      className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-medium ${
+                        user.checkedDays[i]
+                          ? isGold
+                            ? "bg-yellow-400 text-black"
+                            : "bg-white text-black"
+                          : "bg-white/10 text-white/30"
+                      }`}
+                    >
+                      {day}
                     </div>
                   ))}
                 </div>
-                {/* podium block */}
-                <div
-                  className={`w-full ${podiumHeights[tierIndex]} bg-white/10 rounded-t-md flex flex-col items-center justify-start pt-2 gap-1`}
-                >
-                  <span className="text-2xl">{medals[tierIndex]}</span>
-                  <span className="text-white/60 text-lg">
-                    {tier[0].count}x
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* rest as rows */}
-      <div className="flex flex-col gap-2">
-        {rest.map((user, i) => (
-          <div
-            key={user.id}
-            className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5"
-          >
-            <span className="text-white/30 text-md w-4">
-              {tiers.length + 1 + i}
-            </span>
-            <img
-              src={user.avatar_url}
-              alt={user.full_name}
-              className="w-8 h-8 rounded-full object-cover"
-            />
-            <span className="flex-1 text-md text-white/80">
-              {user.full_name}
-            </span>
-            <span className="text-white/40 text-md">{user.count}x</span>
-          </div>
-        ))}
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
