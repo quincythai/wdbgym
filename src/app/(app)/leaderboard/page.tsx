@@ -144,8 +144,8 @@ export default function LeaderboardPage() {
               }`}
             >
               {/* top row: medal, avatar, name */}
-              <div className="flex items-center gap-3">
-                <span className="text-lg w-6 text-center">
+              <div className="flex items-center gap-2 rounded-lg">
+                <span className="text-lg w-6 text-center shrink-0">
                   {isGold ? "🥇" : isSilver ? "🥈" : isBronze ? "🥉" : ""}
                 </span>
                 <div className="w-9 h-9 rounded-full bg-white/20 overflow-hidden flex items-center justify-center shrink-0">
@@ -161,35 +161,39 @@ export default function LeaderboardPage() {
                     </span>
                   )}
                 </div>
-                <span className="flex-1 text-sm text-white/80">
+                <span className="text-sm text-white/80 shrink-0">
                   {formatName(user.full_name)}
                 </span>
                 <span
-                  className={`text-xs font-medium ${isGold ? "text-yellow-400" : "text-white/40"}`}
+                  className={`text-xs font-medium shrink-0 ${isGold ? "text-yellow-400" : "text-white/40"}`}
                 >
                   {user.count}x
                 </span>
-              </div>
 
-              {/* day circles */}
-              {user.count > 0 && (
-                <div className="flex gap-1 pl-9 ml-6">
-                  {DAYS.map((day, i) => (
-                    <div
-                      key={day}
-                      className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-medium ${
-                        user.checkedDays[i]
-                          ? isGold
-                            ? "bg-yellow-400 text-black"
-                            : "bg-white text-black"
-                          : "bg-white/10 text-white/30"
-                      }`}
-                    >
-                      {day}
-                    </div>
-                  ))}
-                </div>
-              )}
+                {/* day circles inline */}
+                {user.count > 0 ? (
+                  <div className="flex gap-1 flex-1 justify-end">
+                    {DAYS.map((day, i) => (
+                      <div
+                        key={day}
+                        className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-medium shrink-0 ${
+                          user.checkedDays[i]
+                            ? isGold
+                              ? "bg-yellow-400 text-black"
+                              : "bg-white text-black"
+                            : "bg-white/10 text-white/30"
+                        }`}
+                      >
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="text-xs text-white/20 flex-1 text-right">
+                    no visits
+                  </span>
+                )}
+              </div>
             </div>
           );
         })}
