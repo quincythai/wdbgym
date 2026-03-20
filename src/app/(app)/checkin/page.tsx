@@ -2,6 +2,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import confetti from "canvas-confetti";
 
 const GYM_LAT = parseFloat(process.env.NEXT_PUBLIC_GYM_LAT!);
 const GYM_LNG = parseFloat(process.env.NEXT_PUBLIC_GYM_LNG!);
@@ -105,6 +106,11 @@ export default function CheckinPage() {
               minute: "2-digit",
             }),
           );
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
         }
 
         setSubmitting(false);

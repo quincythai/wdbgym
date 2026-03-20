@@ -33,6 +33,7 @@ const LIFTS = [
   "Overhead Press",
   //   "Barbell Row",
   "Dip",
+  "Pull Up",
   "Hip Thrust",
   "Calf raise",
 ];
