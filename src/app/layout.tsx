@@ -15,7 +15,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "WDBgym",
   description:
-    "for da hustlers of web development at berkeley. track wdb workouts for that week",
+    "For da gymgoers of WDB. Track workouts, record PRs, and see how you compare on the leaderboard!",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "WDB Gym",
+  },
   icons: {
     icon: "/fat-wdb.svg",
   },
