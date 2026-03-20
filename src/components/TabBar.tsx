@@ -22,6 +22,13 @@ export default function TabBar() {
         <span className="text-lg">🏆</span>
         <span>Leaderboard</span>
       </Link>
+      <Link
+        href="/records"
+        className={`flex-1 flex flex-col items-center justify-center text-xs gap-1 transition-colors ${pathname === "/records" ? "text-white" : "text-white/30"}`}
+      >
+        <span className="text-lg">💪</span>
+        <span>Records</span>
+      </Link>
     </nav>
   );
 }

@@ -32,8 +32,8 @@ export default async function AppLayout({
           Try logging in with your Berkeley email, if you are in WDB.
         </p>
         <p className="text-white/40 text-sm mt-2">
-          Update 3/17: For non-WDB members, I'm working to add a spectator mode
-          so you can see the leaderboard{" "}
+          3/17: For non-WDB members, I'm working to add a spectator mode so you
+          can see the leaderboard
         </p>
       </div>
     );
